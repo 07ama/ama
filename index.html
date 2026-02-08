@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For my Vidu ❤️</title> <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            font-family: 'Indie Flower', cursive;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
+            line-height: 1.2;
+        }
+
+        .gif-container img {
+            width: 250px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .btn-container {
+            margin-top: 30px;
+            width: 100%;
+            height: 60px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; 
+        }
+
+        button {
+            font-family: 'Indie Flower', cursive;
+            font-size: 1.5rem;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            z-index: 100;
+            position: relative; 
+        }
+
+        #yesBtn:hover {
+            background-color: #d6336c;
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        #noBtn {
+            background-color: white;
+            color: #ff4d6d;
+            border: 2px solid #ff4d6d;
+            z-index: 101;
+            position: absolute; 
+            left: 65%; /* Start slightly to the right */
+        }
+
+        /* Background Hearts */
+        .heart {
+            position: absolute;
+            color: #fff;
+            opacity: 0.5;
+            animation: floatUp 6s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hearts-bg"></div>
+
+    <div class="container">
+        <div class="gif-container" id="gifContainer">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmM2Z2l4bHl6M2l5aW14Y2l6aXk5ZzJ6Y3I5Z2l6aXk5ZzJ6Y3I5ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oriO0OEd9QIDdllqo/giphy.gif" alt="Cute Cat">
+        </div>
+
+        <h1 id="question">Will you be my Valentine, Vidu?</h1>
+
+        <div class="btn-container">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const question = document.getElementById('question');
+        const gifContainer = document.getElementById('gifContainer');
+        const heartsBg = document.getElementById('hearts-bg');
+
+        let yesScale = 1;
+
+        // Personalized texts for the No button
+        const noTexts = [
+            "No?", 
+            "Vidu please!", 
+            "Really sure?", 
+            "Think again Vidu!", 
+            "Last chance!", 
+            "Surely not?", 
+            "You might regret this!", 
+            "Give it another thought!", 
+            "Ama will be sad!", 
+            "This could be a mistake!", 
+            "Have a heart!", 
+            "Don't be so cold!", 
+            "Change of heart?", 
+            "Wouldn't you reconsider?", 
+            "Is that your final answer?", 
+            "You're breaking my heart ;("
+        ];
+
+        // --- ORBIT LOGIC (Keeps button near Yes but safe) ---
+        function moveNoButton() {
+            const yesRect = yesBtn.getBoundingClientRect();
+            const yesX = yesRect.left + (yesRect.width / 2);
+            const yesY = yesRect.top + (yesRect.height / 2);
+
+            const minDistance = 100; 
+            const maxDistance = 250; 
+
+            let newX, newY;
+            let foundSafeSpot = false;
+
+            for(let i=0; i<15; i++) {
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = minDistance + Math.random() * (maxDistance - minDistance);
+
+                const potentialX = yesX + Math.cos(angle) * distance - (noBtn.offsetWidth / 2);
+                const potentialY = yesY + Math.sin(angle) * distance - (noBtn.offsetHeight / 2);
+
+                if (potentialX > 20 && potentialX < window.innerWidth - noBtn.offsetWidth - 20 &&
+                    potentialY > 20 && potentialY < window.innerHeight - noBtn.offsetHeight - 20) {
+                    
+                    newX = potentialX;
+                    newY = potentialY;
+                    foundSafeSpot = true;
+                    break;
+                }
+            }
+
+            if (!foundSafeSpot) {
+                newX = yesX + 100;
+                newY = yesY;
+            }
+
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+
+            const randomText = noTexts[Math.floor(Math.random() * noTexts.length)];
+            noBtn.innerText = randomText;
+
+            yesScale += 0.15;
+            yesBtn.style.transform = `scale(${yesScale})`;
+        }
+
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('click', moveNoButton);
+
+
+        // --- YES BUTTON LOGIC ---
+        yesBtn.addEventListener('click', () => {
+            // Personalized Success Message
+            question.innerHTML = "Yay! I love you Vidu! ❤️<br><span style='font-size: 0.5em; display:block; margin-top:10px;'>- Love, Ama</span>";
+            
+            // Happy Cat GIF
+            gifContainer.innerHTML = '<img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW5sM2Z4YjJ6Y3I5Z2l6aXk5ZzJ6Y3I5Z2l6aXk5ZzJ6Y3I5ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/T86i6yDyOYz7J6dPhf/giphy.gif" alt="Happy Cat">';
+            
+            noBtn.style.display = 'none';
+            
+            yesBtn.style.transform = 'scale(1.2)';
+            yesBtn.innerText = "❤️";
+            yesBtn.style.pointerEvents = 'none';
+
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ff9a9e', '#ffffff']
+            });
+
+            setInterval(() => {
+                confetti({
+                    particleCount: 50,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    scalar: 0.8
+                });
+            }, 2000);
+        });
+
+        // --- HEARTS BG ---
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            heartsBg.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+        setInterval(createHeart, 400);
+
+    </script>
+
+</body>
+</html>
